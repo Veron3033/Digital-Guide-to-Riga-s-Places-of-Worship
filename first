@@ -1,0 +1,254 @@
+import React, { useState } from "react";
+
+// Single-file React component for the project's homepage
+// Tailwind CSS classes used for styling (no imports required here)
+// Mock data used for preview; replace with real API/GIS integration later
+
+export default function RigaWorshipHomepage() {
+  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState({
+    denomination: "Any",
+    era: "Any",
+    status: "Any",
+    style: "Any",
+  });
+
+  const mockFeatured = [
+    {
+      id: 1,
+      title: "St. Peter's Church",
+      denom: "Lutheran",
+      era: "Medieval",
+      status: "Active",
+      location: "Old Town",
+    },
+    {
+      id: 2,
+      title: "Orthodox Cathedral",
+      denom: "Orthodox",
+      era: "19th c.",
+      status: "Active",
+      location: "Center",
+    },
+    {
+      id: 3,
+      title: "Repurposed Church — Planetarium",
+      denom: "Former Catholic",
+      era: "Soviet-era repurpose",
+      status: "Inactive",
+      location: "Sarkandaugava",
+    },
+  ];
+
+  function handleFilterChange(key, value) {
+    setFilters((f) => ({ ...f, [key]: value }));
+  }
+
+  function filteredData() {
+    // In the final site, this logic will query the server / database.
+    return mockFeatured.filter((item) => {
+      if (query && !item.title.toLowerCase().includes(query.toLowerCase())) return false;
+      if (filters.denomination !== "Any" && item.denom !== filters.denomination) return false;
+      if (filters.era !== "Any" && item.era !== filters.era) return false;
+      if (filters.status !== "Any" && item.status !== filters.status) return false;
+      if (filters.style !== "Any" && (item.style || "Unknown") !== filters.style) return false;
+      return true;
+    });
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      {/* Header */}
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-indigo-600 to-teal-400 flex items-center justify-center text-white font-bold">RW</div>
+              <div>
+                <h1 className="text-xl font-semibold">Riga: Digital Guide to Places of Worship</h1>
+                <p className="text-sm text-gray-500">The first searchable, map-driven database of Riga’s active & historic sacred sites</p>
+              </div>
+            </div>
+            <nav className="text-sm text-gray-600">
+              <a className="px-3 py-2 hover:text-indigo-600" href="#features">Features</a>
+              <a className="px-3 py-2 hover:text-indigo-600" href="#method">Method</a>
+              <a className="px-3 py-2 hover:text-indigo-600" href="#contribute">Contribute</a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero / Search */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow p-6">
+              <h2 className="text-2xl font-semibold">Explore Riga’s religious landscape</h2>
+              <p className="mt-2 text-gray-600">Search or filter the map to find churches, synagogues, mosques, prayer houses, repurposed sites, and meeting halls across Riga. Use the filters to explore changes across historical eras and architectures.</p>
+
+              <div className="mt-6 flex gap-3 flex-col sm:flex-row">
+                <input
+                  aria-label="Search places"
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-200 outline-none"
+                  placeholder="Search by name, neighborhood, or keyword (e.g., 'Neo-Gothic')"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+
+                <button className="px-4 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700">Search</button>
+
+                <button className="px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50">Advanced</button>
+              </div>
+
+              {/* Quick filters */}
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-gray-700">
+                <select className="p-2 rounded-md border" value={filters.denomination} onChange={(e) => handleFilterChange('denomination', e.target.value)}>
+                  <option>Any</option>
+                  <option>Lutheran</option>
+                  <option>Orthodox</option>
+                  <option>Catholic</option>
+                  <option>Jewish</option>
+                  <option>Muslim</option>
+                  <option>Other</option>
+                </select>
+
+                <select className="p-2 rounded-md border" value={filters.era} onChange={(e) => handleFilterChange('era', e.target.value)}>
+                  <option>Any</option>
+                  <option>Medieval</option>
+                  <option>Baroque</option>
+                  <option>19th c.</option>
+                  <option>Soviet-era repurpose</option>
+                  <option>Post-1991</option>
+                </select>
+
+                <select className="p-2 rounded-md border" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+                  <option>Any</option>
+                  <option>Active</option>
+                  <option>Inactive</option>
+                  <option>Repurposed</option>
+                </select>
+
+                <select className="p-2 rounded-md border" value={filters.style} onChange={(e) => handleFilterChange('style', e.target.value)}>
+                  <option>Any</option>
+                  <option>Neo-Gothic</option>
+                  <option>Baroque</option>
+                  <option>Art Nouveau</option>
+                  <option>Soviet Modern</option>
+                </select>
+              </div>
+
+              {/* Map placeholder */}
+              <div className="mt-6 border border-gray-200 rounded-lg overflow-hidden h-72">
+                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                  Interactive map (QGIS → web map layer)
+                </div>
+              </div>
+            </div>
+
+            {/* Featured results */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {filteredData().map((f) => (
+                <article key={f.id} className="bg-white rounded-xl p-4 shadow">
+                  <h3 className="font-semibold">{f.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{f.denom} • {f.era} • {f.status}</p>
+                  <p className="text-xs text-gray-500 mt-2">{f.location}</p>
+                  <div className="mt-3 flex gap-2">
+                    <button className="px-3 py-1 text-sm rounded-md border">View profile</button>
+                    <button className="px-3 py-1 text-sm rounded-md border">Zoom on map</button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+          </div>
+
+          {/* Right column: quick stats & methodology */}
+          <aside className="space-y-4">
+            <div className="bg-white rounded-xl shadow p-4">
+              <h4 className="font-semibold">Quick stats (prototype)</h4>
+              <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-700">
+                <div>
+                  <dt className="text-xs text-gray-500">Total sites (sample)</dt>
+                  <dd className="font-medium">128</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Active</dt>
+                  <dd className="font-medium">82</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Inactive / Repurposed</dt>
+                  <dd className="font-medium">29</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Post-1991 newcomers</dt>
+                  <dd className="font-medium">17</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="bg-white rounded-xl shadow p-4">
+              <h4 className="font-semibold">Method in brief</h4>
+              <p className="mt-2 text-sm text-gray-600">QGIS georeferencing + cadastral checks, field verification with GPS & photos, classification by status/denomination/era/style, analysis in Tableau. Data sources: archives, Rīgas Dievnāmi, heritage lists, cadastral registers, and fieldwork.</p>
+              <a className="inline-block mt-3 text-sm text-indigo-600" href="#method">Read full methodology →</a>
+            </div>
+
+            <div className="bg-white rounded-xl shadow p-4">
+              <h4 className="font-semibold">Contribute</h4>
+              <p className="mt-2 text-sm text-gray-600">Missing a site or found a mismatch? Contribute verified data (photos, location). We verify before adding to the public database.</p>
+              <button className="mt-3 px-3 py-2 rounded-md bg-teal-500 text-white">Submit a site</button>
+            </div>
+
+          </aside>
+        </section>
+
+        {/* Features / Why it matters */}
+        <section id="features" className="mt-10">
+          <div className="bg-white rounded-2xl shadow p-6">
+            <h3 className="text-xl font-semibold">Why this project matters</h3>
+            <p className="mt-2 text-gray-600">This guide fills a cultural heritage gap by documenting both canonical and small, emergent places of worship. It supports researchers, tourists, and community members, and provides a spatial lens for understanding Riga's shifting religious topography across political eras.</p>
+
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 border rounded">
+                <h4 className="font-semibold">Research</h4>
+                <p className="text-sm text-gray-600 mt-1">Quantify closures, openings, and architectural reuse across time.</p>
+              </div>
+              <div className="p-4 border rounded">
+                <h4 className="font-semibold">Public value</h4>
+                <p className="text-sm text-gray-600 mt-1">A searchable, single reference for visitors and Riga residents.</p>
+              </div>
+              <div className="p-4 border rounded">
+                <h4 className="font-semibold">Community</h4>
+                <p className="text-sm text-gray-600 mt-1">A platform for small communities to be visible in the city’s cultural record.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Method / Next steps */}
+        <section id="method" className="mt-8">
+          <div className="bg-white rounded-2xl shadow p-6">
+            <h3 className="text-xl font-semibold">Current status & next steps</h3>
+            <ul className="mt-3 list-disc pl-5 text-sm text-gray-700">
+              <li>Complete QGIS georeferencing for remaining historical layer (target: 100%).</li>
+              <li>Fieldwork to verify unregistered places of worship (ethical guidelines & consent forms drafted).</li>
+              <li>Database population and API endpoints for the website.</li>
+              <li>Front-end map integration and final visual polish.</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer id="contribute" className="mt-10 text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© Riga Places of Worship — Project Team. Built for the Digital Humanities course.</p>
+            <div className="flex gap-4 items-center">
+              <a className="hover:text-indigo-600" href="#">Privacy</a>
+              <a className="hover:text-indigo-600" href="#">Data policy</a>
+              <a className="hover:text-indigo-600" href="#">Contact</a>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+  );
+}
